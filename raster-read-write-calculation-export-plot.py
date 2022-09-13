@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Import all packages and libraries
-
-# In[ ]:
-
-
+# Import all packages and libraries
 import os
 import rasterio
 import rasterio.plot
@@ -26,71 +22,51 @@ import earthpy.plot as ep
 ### if not, follow the installation from
 ### https://rasterio.readthedocs.io/en/latest/installation.html
 ### make sure earthpy is also installed
-### if not follow the installation from 
+### if not follow the installation from
 ### https://earthpy.readthedocs.io/en/latest/get-started.html#install-earthpy
 ### best option is to use anaconda python distribution
 
 
-# # Step 1
+# Step 1
+# Read and open raster data file
+# Example shows to read, open, analysis, and work multiband .bsq file
+# And this example can apply for geotiff file format too, just change the file extesion from .bsq to .tif
+# Notes: Both raster files must have similar profile, e.g., coordinate system, no. of rows and columns, extensions. If not, then it must be done before applying this Jupyter script.
 
-# ## Read and open raster data file
-# ### Example shows to read, open, analysis, and work multiband .bsq file
-# ### And this example can apply for geotiff file format too, just change the file extesion from .bsq to .tif
-# ###### Notes: Both raster files must have similar profile, e.g., coordinate system, no. of rows and columns, extensions. If not, then it must be done before applying this Jupyter script.
-
-# In[ ]:
-
-
+# open and read file 1
 file1 = 'your/file/location/file1.bsq'
-
-
-# In[ ]:
-
 
 with rasterio.open(file1, 'r') as dst1:
     #print(dst1)
     print(dst1.profile)
     print("No. of band:", dst1.count) # to know number of bands
-    ### read all bands as a numpy array list 
+    ### read all bands as a numpy array list
     data1 = dst1.read() # read all raster bands as data1
-    print("Shape:", data1.shape) # to know the shape of the list of 2D numpy arrayes 
+    print("Shape:", data1.shape) # to know the shape of the list of 2D numpy arrayes
     # plot band 1 for a quick look
     fig, (ax1) = plt.subplots(1,1, figsize=(12,6))
-    show((dst1, 1), ax=ax1, cmap='gray', title='band 1') 
+    show((dst1, 1), ax=ax1, cmap='gray', title='band 1')
 
-
-# In[ ]:
-
-
+# open and read file 2
 file2 = 'your/file/location/file2.bsq'
-
-
-# In[ ]:
-
 
 with rasterio.open(file2, 'r') as dst2:
     #print(dst2)
     print(dst2.profile)
     print("No. of band:", dst2.count) # to know number of bands
-    ### read all bands as a numpy array list 
+    ### read all bands as a numpy array list
     data2 = dst2.read() # read all raster bands as data2
-    print("Shape:", data2.shape) # to know the shape of the list of 2D numpy arrayes 
+    print("Shape:", data2.shape) # to know the shape of the list of 2D numpy arrayes
     # plot band 1 for a quick look
     fig, (ax1) = plt.subplots(1,1, figsize=(12,6))
-    show((dst2, 1), ax=ax1, cmap='gray', title='band 1') 
+    show((dst2, 1), ax=ax1, cmap='gray', title='band 1')
 
 
-# # Step 2
-
-# ## Working with full raster area extension
-
-# ### As an example lets calculate NDVI for each band from multiband 2D numpy arrays
-# #### An iteration over a list of 2D numpy arrays
-# ##### Note: Output will be a list of 2d numpy arrays
-
-# In[ ]:
-
-
+# Step 2
+# Working with full raster area extension
+# As an example lets calculate NDVI for each band from multiband 2D numpy arrays
+# An iteration over a list of 2D numpy arrays
+# Note: Output will be a list of 2d numpy arrays
 def ndvi():
     x = data1
     y = data2
@@ -103,13 +79,8 @@ print(type(ndvi))
 print(ndvi().shape)
 #print(ndvi())
 
-
-# ### As an example lets calculate NDVI for a specific band from individual 2D numpy arrays
-# ##### Output will be a 2d numpy array
-
-# In[ ]:
-
-
+# As an example lets calculate NDVI for a specific band from individual 2D numpy arrays
+# Output will be a 2d numpy array
 def ndvi1(): #for ndvi of band 1 of data1 and data2
     x = data1[0,:,:]     #[0,:,:] for band 1, [1,:,:] for band 2, [2,:,:] for band 3 and so on
     y = data2[0,:,:]
@@ -122,19 +93,13 @@ print(type(ndvi1))
 print(ndvi1().shape)
 #print(ndvi1())
 
-
-# ##### Notes: why two different function names?, I.e., ndvi() and ndvi1()
-# ##### Because then each function can call specifically without any naming conflict
-
-# # Step 3
-
-# ## Calculate variables based on mathematical equations
-
-# In[ ]:
+# Notes: why two different function names?, I.e., ndvi() and ndvi1()
+# Because then each function can call specifically without any naming conflict
 
 
+# Step 3
+# Calculate variables based on mathematical equations
 # lets calculate a new variable from our data files called var1
-
 def var1():
     p = 0.12
     c = 2.23
@@ -149,12 +114,7 @@ print(type(var1))
 print(var1().shape)
 #print(var1())
 
-
-# In[ ]:
-
-
 # lets calculate another new variable from our data files called var2
-
 def var2():
     p = 0.12
     c = 2.23
@@ -170,15 +130,9 @@ print(var2().shape)
 #print(var2())
 
 
-# # Step 4
-
-# ## Let's use var1 and var2 for calculating a new variable
-
-# In[ ]:
-
-
+# Step 4
+# Let's use var1 and var2 for calculating a new variable
 # lets calculate a new variable from var1 and var1 called var3
-
 def var3():
     var3 = ((var2() - var1()) / var1()) * 100
     return var3
@@ -190,14 +144,9 @@ print(var3().shape)
 #print(var3())
 
 
-# # Step 5
-
-# ## Export calculated multiband or single band raster 
-
-# ### Export calculated multiband raster file
-
-# In[ ]:
-
+# Step 5
+# Export calculated multiband or single band raster
+# Export calculated multiband raster file
 
 # export as multiband geotiff raster
 # geotiff is better than bsq format
@@ -218,12 +167,7 @@ with rasterio.open(
     dst.write(var1().astype(rasterio.float32))
 # change var1() with your multiband 2d numpy array to export
 
-
-# ### Export calculated single band raster file
-
-# In[ ]:
-
-
+# Export calculated single band raster file
 # export as multiband geotiff raster
 # geotiff is better than bsq format
 # for dealing with raster as 2D numpy array
@@ -243,24 +187,22 @@ with rasterio.open(
     dst.write(ndvi1().astype(rasterio.float32), 1) # this command will export a single raster file
 # change ndvi1() with your single 2d numpy array to export
 # because of converting .bsq to .tif
-# a .hdr file will generate in the file directory 
-# this header file will contain all the info from src 
-# but, only band 1 is valid raster data, others just false 
-# open this .hdr file with any text editor 
-# and make sure inside .hdr file 'band = 1' and 'band names = {Band 1}', 
+# a .hdr file will generate in the file directory
+# this header file will contain all the info from src
+# but, only band 1 is valid raster data, others just false
+# open this .hdr file with any text editor
+# and make sure inside .hdr file 'band = 1' and 'band names = {Band 1}',
 # band name can be anything, so only keep ther first name of the band
 # now save the change and close the .hdr file
 # you are all set to go!
 
 
-# # Working within ROI or AOI or smaller area of raster
+### <! THIS SECTION IS ONLY NEEDED FOR WORKING WITH AOI OR ROI !> ###
 
-# ### Clip all rasters with an ROI or AOI shape file
-# #### For example a polygon with ESRI shapefile format used 
-# ##### Clipping must be done for each file individually
-
-# In[ ]:
-
+# Working within ROI or AOI or smaller area of raster
+# Clip all rasters with an ROI or AOI shape file
+# For example a polygon with ESRI shapefile format used
+# Clipping must be done for each file individually
 
 import fiona
 import rasterio
@@ -274,7 +216,7 @@ with rasterio.open("your/output/location/var1.tif") as src:
     out_meta = src.meta
 # write output file into GeoTiff format
 # and save it in any directory rather than in system directory
-# based on rasterio and python, geotiff format 
+# based on rasterio and python, geotiff format
 # is more convinient than bsq format
 out_meta.update({"driver": "GTiff",
                  "height": out_image.shape[1],
@@ -283,28 +225,22 @@ out_meta.update({"driver": "GTiff",
 with rasterio.open("your/output/location/var1-ROI.tif", "w", **out_meta) as dest:
     dest.write(out_image)
 
+# Notes: Based on working method follow from Step 2 to Step 5
 
-# ###### Notes:
-# ###### Based on working method follow from Step 2 to Step 5 
+### <! THIS SECTION IS ONLY NEEDED FOR WORKING WITH AOI OR ROI !> ###
 
-# # Step 6
 
-# ## Plotting multiband 2D numpy arrays for quick visualization
-
-# In[ ]:
-
+# Step 6
+# Plotting multiband 2D numpy arrays for quick visualization
 
 titles = ["var3"]
 ep.plot_bands(var3(), cols=6)
 
 
-# # Step 7
-
-# ## Plotting multiband 2D numpy arrays for paper
-# ###### It is good idea to call each band or 2D numpy array individually and then plot to maintain highest configuration options
-
-# In[ ]:
-
+# Step 7
+# Plotting multiband 2D numpy arrays for paper
+# It is good idea to call each band or 2D numpy array
+# individually and then plot to maintain highest configuration options
 
 # as an example lets plot first three bands of var3
 # now define individual bands or 2D numpy array
@@ -313,13 +249,9 @@ band1 = var3()[0,:,:] #[0,:,:] for band 1
 band2 = var3()[1,:,:] #[1,:,:] for band 2
 band3 = var3()[2,:,:] #[2,:,:] for band 3
 
-
-# In[ ]:
-
-
-# make a function for exporting individual band 
+# make a function for exporting individual band
 # or 2D numpy array as png format figure
-# but we can change format, e.g., 
+# but we can change format, e.g.,
 # jpg by change fig_extension="jpg"
 OUT_DIR = "your/output/figure/location" # to a specific directory
 # or
@@ -335,16 +267,12 @@ def export_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
         plt.tight_layout()
     plt.savefig(path, format=fig_extension, dpi=resolution)
 
-
-# In[ ]:
-
-
 # now plot all these three bands in a single figure
 # fix the plot style as default matplotlib figure style
 plt.style.use('default')
 
 # define three subplots for each band
-plt.subplot(131) # its place band 1 in 1st row 1st column  
+plt.subplot(131) # its place band 1 in 1st row 1st column
 plt.imshow(band1, cmap='jet') # plot command for band 1 with color map
 cbar = plt.colorbar(shrink=0.7) # color bar size
 cbar.set_label('[unit]', fontsize=12) # color bar lable
@@ -352,7 +280,7 @@ plt.clim(400, 2000) # color bar limit
 plt.title('band 1', loc='center', fontsize=15)
 
 
-plt.subplot(132) # its place band 2 in 1st row 2nd column  
+plt.subplot(132) # its place band 2 in 1st row 2nd column
 plt.imshow(band2, cmap='jet') # plot command for band 2 with color map
 cbar = plt.colorbar(shrink=0.7) # color bar size
 cbar.set_label('[unit]', fontsize=12) # color bar lable
@@ -360,7 +288,7 @@ plt.clim(400, 2000) # color bar limit
 plt.title('band 2', loc='center', fontsize=15) # plot title
 
 
-plt.subplot(133) # its place band 3 in 1st row 3rd column  
+plt.subplot(133) # its place band 3 in 1st row 3rd column
 plt.imshow(band3, cmap='jet') # plot command for band 3 with color map
 cbar = plt.colorbar(shrink=0.7) # color bar size
 cbar.set_label('[unit]', fontsize=12) # color bar lable
@@ -368,5 +296,4 @@ plt.clim(400, 2000) # color bar limit
 plt.title('band 3', loc='center', fontsize=15) # plot title
 
 plt.gcf().set_size_inches(18, 6) # fix figure size and fit
-export_fig('example-3') # export and save figure by calling python function 
-
+export_fig('example-3') # export and save figure by calling python function
